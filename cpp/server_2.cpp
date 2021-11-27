@@ -11,7 +11,7 @@
 // client1에 symmetric key crypto 적용
 // 적용 알고리즘 : AES (ECB mode)
 
-unsigned int parseuint8(char* bytes){
+unsigned int parseuint(char* bytes){
 	unsigned int val = 0;
 	for(int i = 0;i<4;++i){
 		val <<= 8;
@@ -19,7 +19,7 @@ unsigned int parseuint8(char* bytes){
 	}
 	return val;
 }
-void uint8_to_bytes(char* bytes, unsigned int val){
+void uint_to_bytes(char* bytes, unsigned int val){
 	for(int i =0;i<4;++i){
 		bytes[i] = (char)(val >> (3-i) * 8);
 	}
@@ -37,14 +37,14 @@ void byteVector_to_bytes(char* bytes, std::vector<unsigned char>& byteVector){
 		bytes++;
 	}
 }
-std::vector<unsigned char> uint8_to_byteVector(unsigned int val){
+std::vector<unsigned char> uint_to_byteVector(unsigned int val){
 	std::vector<unsigned char> result(4, 0);
 	for(int i =0;i<4;++i){
 		result[i] = (char)(val >> (3-i) * 8);
 	}
 	return result;
 }
-unsigned int parseuint8(std::vector<unsigned char>& byteVector, int start){
+unsigned int parseuint(std::vector<unsigned char>& byteVector, int start){
 	unsigned int val = 0;
 	for(int i = 0;i<4;++i){
 		val <<= 8;
@@ -138,10 +138,10 @@ int main(int argc, char** argv) {
 			}
 			auto enc_header = bytes_to_byteVector(buf, 16);
 			auto header = engine.decrypto(enc_header, 0);	//원본이 16byte이므로 padding 0
-			auto size_userId = parseuint8(header, 0);
-			auto pad_userId = parseuint8(header, 4);
-			auto size_userPw = parseuint8(header, 8);
-			auto pad_userPw = parseuint8(header, 12);
+			auto size_userId = parseuint(header, 0);
+			auto pad_userId = parseuint(header, 4);
+			auto size_userPw = parseuint(header, 8);
+			auto pad_userPw = parseuint(header, 12);
 
 			if(size_userId - pad_userId > 100 || size_userPw - pad_userPw > 100 || pad_userId > 15 || pad_userPw > 15){
 				std::cout<<"recv header : Invalid value\nconnect close...\n";
@@ -216,12 +216,12 @@ int main(int argc, char** argv) {
 			}
 			auto enc_val = bytes_to_byteVector(buf, 16);
 			auto val_vec = engine.decrypto(enc_val, 12);
-			auto val = parseuint8(val_vec, 0);
+			auto val = parseuint(val_vec, 0);
 			unsigned int result = val*val;		//오버플로우 허용
 			std::cout<< "recv value : " << val << "\n";
 			std::cout<<"result value : "<< result << "\n";
 			
-			auto result_vec = uint8_to_byteVector(result);
+			auto result_vec = uint_to_byteVector(result);
 			auto enc_result = engine.encrypto(result_vec, unused);
 			byteVector_to_bytes(buf, enc_result);
 			send(client_sock, buf, 16, 0);

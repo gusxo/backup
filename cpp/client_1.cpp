@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-unsigned int parseuint8(char* bytes){
+unsigned int parseuint(char* bytes){
 	unsigned int val = 0;
 	for(int i = 0;i<4;++i){
 		val <<= 8;
@@ -13,7 +13,7 @@ unsigned int parseuint8(char* bytes){
 	}
 	return val;
 }
-void uint8_to_bytes(char* bytes, unsigned int val){
+void uint_to_bytes(char* bytes, unsigned int val){
 	for(int i =0;i<4;++i){
 		bytes[i] = (char)(val >> (3-i) * 8);
 	}
@@ -63,12 +63,12 @@ int main(int argc, char** argv) {
 		}
 		std::cout<<"auth success\n";
 
-		uint8_to_bytes(buf, val);
+		uint_to_bytes(buf, val);
 		send(sock, buf, 4, 0);
 		std::cout<<"send value\n";
 
 		recv(sock, buf, 4, 0);
-		auto result = parseuint8(buf);
+		auto result = parseuint(buf);
 		std::cout<<"recv result : " <<result <<"\n";
 
 		close(sock);

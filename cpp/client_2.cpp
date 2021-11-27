@@ -10,7 +10,7 @@
 // 적용 알고리즘 : AES (ECB mode)
 
 
-unsigned int parseuint8(char* bytes){
+unsigned int parseuint(char* bytes){
 	unsigned int val = 0;
 	for(int i = 0;i<4;++i){
 		val <<= 8;
@@ -18,7 +18,7 @@ unsigned int parseuint8(char* bytes){
 	}
 	return val;
 }
-void uint8_to_bytes(char* bytes, unsigned int val){
+void uint_to_bytes(char* bytes, unsigned int val){
 	for(int i =0;i<4;++i){
 		bytes[i] = (char)(val >> (3-i) * 8);
 	}
@@ -36,14 +36,14 @@ void byteVector_to_bytes(char* bytes, std::vector<unsigned char>& byteVector){
 		bytes++;
 	}
 }
-std::vector<unsigned char> uint8_to_byteVector(unsigned int val){
+std::vector<unsigned char> uint_to_byteVector(unsigned int val){
 	std::vector<unsigned char> result(4, 0);
 	for(int i =0;i<4;++i){
 		result[i] = (char)(val >> (3-i) * 8);
 	}
 	return result;
 }
-unsigned int parseuint8(std::vector<unsigned char>& byteVector, int start){
+unsigned int parseuint(std::vector<unsigned char>& byteVector, int start){
 	unsigned int val = 0;
 	for(int i = 0;i<4;++i){
 		val <<= 8;
@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
 		auto enc_userId = engine.encrypto(userId, pad_userId);
 		auto userPw = bytes_to_byteVector(argv[3], pwsize);
 		auto enc_userPw = engine.encrypto(userPw, pad_userPw);
-		auto val_vec = uint8_to_byteVector(val);
+		auto val_vec = uint_to_byteVector(val);
 		auto enc_val = engine.encrypto(val_vec, pad_unused);
 		std::cout << "encrypto complete\n\n";
 		std::cout << "- E(userId) size : " << enc_userId.size() << " / hex : " << engine.bytes_to_hexstr(enc_userId) << "\n";
@@ -103,10 +103,10 @@ int main(int argc, char** argv) {
 
 		//암호화 결과에 따른 길이 정보 전송
 		char header[16];
-		uint8_to_bytes(header, enc_userId.size());
-		uint8_to_bytes(header+4, pad_userId);
-		uint8_to_bytes(header+8, enc_userPw.size());
-		uint8_to_bytes(header+12, pad_userPw);
+		uint_to_bytes(header, enc_userId.size());
+		uint_to_bytes(header+4, pad_userId);
+		uint_to_bytes(header+8, enc_userPw.size());
+		uint_to_bytes(header+12, pad_userPw);
 		auto headerVec = bytes_to_byteVector(header, 16);
 		auto enc_header = engine.encrypto(headerVec, pad_unused);
 		byteVector_to_bytes(buf, enc_header);
@@ -142,7 +142,7 @@ int main(int argc, char** argv) {
 		recv(sock, buf, 16, 0);
 		auto enc_result = bytes_to_byteVector(buf, 16);
 		auto result = engine.decrypto(enc_result, 12);
-		std::cout << "recv result : " << parseuint8(result, 0) << "\n";
+		std::cout << "recv result : " << parseuint(result, 0) << "\n";
 
 		close(sock);
 	}

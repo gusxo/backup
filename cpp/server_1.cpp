@@ -7,7 +7,7 @@
 #include<fstream>
 #include<unordered_map>
 
-unsigned int parseuint8(char* bytes){
+unsigned int parseuint(char* bytes){
 	unsigned int val = 0;
 	for(int i = 0;i<4;++i){
 		val <<= 8;
@@ -15,7 +15,7 @@ unsigned int parseuint8(char* bytes){
 	}
 	return val;
 }
-void uint8_to_bytes(char* bytes, unsigned int val){
+void uint_to_bytes(char* bytes, unsigned int val){
 	for(int i =0;i<4;++i){
 		bytes[i] = (char)(val >> (3-i) * 8);
 	}
@@ -138,9 +138,9 @@ int main(int argc, char** argv) {
 				close(client_sock);	
 				continue;
 			}
-			unsigned int val = parseuint8(buf);
+			unsigned int val = parseuint(buf);
 			unsigned int result = val*val;		//오버플로우 허용
-			uint8_to_bytes(buf, result);
+			uint_to_bytes(buf, result);
 			std::cout<< "recv value : " << val << "\n";
 			std::cout<<"result value : "<< result << "\n";
 			send(client_sock, buf, 4, 0);
