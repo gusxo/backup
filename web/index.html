@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <header>
+        <title>테스팅</title>
+        <meta charset="utf-8">
+        <script type="text/javascript">
+            const run = ()=>{
+                const data = {
+                    id : document.getElementById("id").value,
+                    pw : document.getElementById("pw").value,
+                    value : document.getElementById("value").value,
+                };
+                console.log(data);
+                fetch("/submit",
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    })
+                    .then(res => res.json())
+                    .then((data) => {
+                        document.getElementById("result").innerHTML = data.msg
+                        console.log(data)
+                    })
+                    .catch(error => console.error(error));
+            }
+        </script>
+    </header>
+    <body>
+        Id : <input type="text" id="id"><br>
+        Password : <input type="text" id="pw"><br>
+        Value : <input type="text" id="value"><br>
+        <input type="button" value="run!" onclick="run()">
+        <div id="result"></div>
+    </body>
+</html>
