@@ -1,0 +1,12 @@
+#include<stdio.h>
+int main(){
+    int var1 = 2;
+    char var2 = 'c';
+    printf("hello world!");
+    if(var1 > 0){
+        var1 = 3;
+    }
+    while(var1){
+        var1 = var1 - 1;
+    }
+}
