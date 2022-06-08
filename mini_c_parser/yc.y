@@ -15,12 +15,17 @@ int yyerror(char* s);
 %token <num> NUMBER CHAR
 %token LEFTROUNDBRACKET RIGHTROUNDBRACKET LEFTCRULYBRACKET RIGHTCRULYBRACKET
 %token LEFTBOXBRACKET RIGHTBOXBRACKET LEFTANGLEBRACKET RIGHTANGLEBRACKET SHARP
-%token COMMA SEMICOLON RETURN INCLUDE WHILE IF CHARTYPE INTTYPE
+%token COMMA SEMICOLON RETURN INCLUDE WHILE IF CHARTYPE INTTYPE REF
 %left PLUS MINUS MUL DIV EQ
 
 %type <str> define_variable assignment variable
 
 %%
+
+start_unit      : statement
+                | include start_unit
+                | statement start_unit
+                ;
 
 statement       : SEMICOLON
                 {}
@@ -29,8 +34,6 @@ statement       : SEMICOLON
                 | assignment SEMICOLON
                 {}
                 | expression SEMICOLON
-                {}
-                | include
                 {}
                 ;
 
@@ -52,37 +55,67 @@ define_variable : INTTYPE ID
 
 assignment      : define_variable EQ expression
                 {printf("assign to %s\n", $1); free($1);}
-                | ID EQ expression
-                {printf("assign to %s\n", $1); free($1);}
+                | variable EQ expression
+                {printf("assign\n"); free($1);}
                 ;
+
+function_arg    : expression
+                {printf("stack.pop(), add to function argument\n");}
+                | expression COMMA function_arg
+                {printf("stack.pop(), add to function argument\n");}
+                ;
+
+function_call   : value LEFTROUNDBRACKET RIGHTROUNDBRACKET
+                {printf("function call\n");}
+                | value LEFTROUNDBRACKET function_arg RIGHTROUNDBRACKET
+                {printf("function call\n");}
 
 expression      : mul_expression
                 {}
                 | expression PLUS mul_expression
-                {printf("stack : +\n");}
+                {printf("operation : +\n");}
                 | expression MINUS mul_expression
-                {printf("stack : -\n");}
+                {printf("operation : -\n");}
                 ;
 
-mul_expression  : variable
+mul_expression  : expression_value
                 {}
-                | mul_expression MUL variable
-                {printf("stack : *\n");}
-                | mul_expression DIV variable
-                {printf("stack : /\n");}
+                | mul_expression MUL expression_value
+                {printf("operation : *\n");}
+                | mul_expression DIV expression_value
+                {printf("operation : /\n");}
                 ;
 
-variable        : LEFTROUNDBRACKET expression RIGHTROUNDBRACKET
+expression_value: const_value
                 {}
-                | ID
-                {printf("use variable : %s\n", $1);}
-                | NUMBER
-                {printf("use constant : %u\n", $1);}
+                | value
+                {}
+                ;
+
+variable        : ID
+                {printf("use variable : %s\n", $1); $$ = $1;}
+                | MUL variable
+                {printf("-- use pointer's reference\n"); $$ = $2;}
+                | REF variable
+                {printf("-- use address\n"); $$ = $2;}
+                ;
+
+const_value     : NUMBER
+                {printf("use constant int : %u\n", $1);}
                 | CHAR
-                {printf("use constant : %c\n", $1);}
+                {printf("use constant char : %c\n", $1);}
                 | STRING
-                {printf("use constant : %s\n", $1);}
+                {printf("use constant string : %s\n", $1); free($1);}
+                ;          
+
+value           : LEFTROUNDBRACKET expression RIGHTROUNDBRACKET
+                {}
+                | variable
+                {free($1);}
+                | function_call
+                {}
                 ;
+                
 
 %%
 int main(){

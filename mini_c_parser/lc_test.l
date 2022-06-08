@@ -47,19 +47,3 @@ return  {printf("%s : RETURN\n", yytext);}
 [ \t]+  /* ignore whitespace */
 .       {printf("%s : unknown token\n", yytext);}
 %%
-
-int main(int argc, char** argv){
-  // open a file handle to a particular file:
-  FILE *myfile = fopen(argv[1], "r");
-  // make sure it's valid:
-  if (!myfile) {
-    printf("I can't open the file!");
-    return -1;
-  }
-  // set lex to read from it instead of defaulting to STDIN:
-  yyin = myfile;
-  
-  // lex through the input:
-  while(yylex());
-  fclose(myfile);
-}

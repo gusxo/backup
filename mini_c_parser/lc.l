@@ -44,6 +44,7 @@ return  {return RETURN;}
 "*"       {return MUL;}
 "="       {return EQ;}
 "#"       {return SHARP;}
-[ \t\n\r\f]+  /* ignore whitespace */
+&       {return REF;}
+[ \t\n\r\f]+  {/* ignore whitespace */;}
 .       {yyerror("unknown token");}
 %%
