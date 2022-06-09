@@ -1,5 +1,6 @@
 #include<stdio.h>
-int main(){
+char* str = "hello world!";
+int main(int argc, char** argv){
     int var1 = 2;
     char var2 = 'c';
     printf("hello world!");

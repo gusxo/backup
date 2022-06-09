@@ -27,7 +27,7 @@ return  {return RETURN;}
     str[len-2] = '\0';
     yylval.str = str; return STRING;}
 [a-zA-Z_][a-zA-Z_0-9]*  {yylval.str = strdup(yytext); return ID;}
-[1-9][0-9]* {yylval.num = atoi(yytext); return NUMBER;}
+([0-9])|([1-9][0-9]+) {yylval.num = atoi(yytext); return NUMBER;}
 ;   {return SEMICOLON;}
 ,   {return COMMA;}
 "("      {return LEFTROUNDBRACKET;}
@@ -42,9 +42,11 @@ return  {return RETURN;}
 "-"       {return MINUS;}
 "/"       {return DIV;}
 "*"       {return MUL;}
-"="       {return EQ;}
-"#"       {return SHARP;}
+==      {return EQ_OP;}
+=       {return EQ;}
+#       {return SHARP;}
 &       {return REF;}
+!=       {return NEQ;}
 [ \t\n\r\f]+  {/* ignore whitespace */;}
 .       {yyerror("unknown token");}
 %%
