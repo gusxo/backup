@@ -106,3 +106,6 @@ dist
 #cpp-exe file & object file
 *.o
 exe/
+
+#pycache file
+__pycache__/
