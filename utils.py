@@ -88,7 +88,7 @@ def min_max_scaler(x):
     info["max"][ch] = max
     x[:,:,ch] = (x[:,:,ch] - minval)/(maxval - minval)
     print(f'channel {ch} value range : {minval} ~ {maxval}')
-  return
+  return info
 
 ##########
 # 데이터 패턴 합치기
