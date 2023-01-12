@@ -63,12 +63,15 @@ def fft_plot(d, fs, channel_list=None, xlim=(-32,32), ylim=(0,2.5)):
 ##########
 
 def z_score(x):
+  info = {"mean":[0]*x.shape[2], "std":[0]*x.shape[2]}
   for ch in range(x.shape[2]):
     mean = np.mean(x[:,:,ch])
     std = np.std(x[:,:,ch])
+    info["mean"][ch] = mean
+    info["std"][ch] = std
     x[:,:,ch] = (x[:,:,ch] - mean)/std
     print(f"channel {ch} mean : {mean} / std : {std}")
-  return
+  return info
 
 ##########
 # 정규화 적용
@@ -77,9 +80,12 @@ def z_score(x):
 ##########
 
 def min_max_scaler(x):
+  info = {"min":[0]*x.shape[2], "max":[0]*x.shape[2]}
   for ch in range(x.shape[2]):
     minval = np.min(x[:,:,ch])
     maxval = np.max(x[:,:,ch])
+    info["min"][ch] = min
+    info["max"][ch] = max
     x[:,:,ch] = (x[:,:,ch] - minval)/(maxval - minval)
     print(f'channel {ch} value range : {minval} ~ {maxval}')
   return
