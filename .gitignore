@@ -109,3 +109,6 @@ exe/
 
 #pycache file
 __pycache__/
+#modelcheckpoint
+*.pkl
+*.h5
