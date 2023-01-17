@@ -8,7 +8,7 @@ from tensorflow.keras.utils import to_categorical
 #https://stackoverflow.com/questions/10252412/matplotlib-varying-color-of-line-to-capture-natural-time-parameterization-in-da/10253183#10253183
 # #plot line with color through time
 from matplotlib.collections import LineCollection
-def draw_gradation(x, y, axes, cmap_name="jet"):
+def draw_gradation(x, y, axes, cmap_name="jet", xlim=None, ylim=None):
     t = np.linspace(0, 1, x.shape[0])
     points = np.array([x, y]).transpose().reshape(-1, 1, 2)
     segs = np.concatenate([points[:-1],points[1:]],axis=1)
@@ -19,8 +19,14 @@ def draw_gradation(x, y, axes, cmap_name="jet"):
 
     # plot the collection
     axes.add_collection(lc) # add the collection to the plot
-    axes.set_xlim(x.min(), x.max()) # line collections don't auto-scale the plot
-    axes.set_ylim(y.min(), y.max())
+    if xlim is None:
+      axes.set_xlim(x.min(), x.max()) # line collections don't auto-scale the plot
+    else:
+      axes.set_xlim(xlim[0], xlim[1])
+    if ylim is None:
+      axes.set_ylim(y.min(), y.max())
+    else:
+      axes.set_ylim(ylim[0], ylim[1])
 
 def fft_analysis(d, fs):
     #d에 대해 FFT 변환을 수행하고, 
