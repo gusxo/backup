@@ -112,3 +112,4 @@ __pycache__/
 #modelcheckpoint
 *.pkl
 *.h5
+synckpt/
