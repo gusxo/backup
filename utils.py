@@ -28,6 +28,48 @@ def draw_gradation(x, y, axes, cmap_name="jet", xlim=None, ylim=None):
     else:
       axes.set_ylim(ylim[0], ylim[1])
 
+def draw_timeseries_writingdata(datas, save=None, titles=None, cmap_name="winter_r"):
+    """
+      matplotlib draw function for specific time-series data : eye-writing, hand-writing(signature), etc..
+      
+      datas : list of {data}. figure size is proportional to the length of {datas}.
+            {data} : (times, 2) shape numpy array for drawing
+
+      save : None or {file-path}. default None.
+            if save = None, this function will ploting result.
+
+            if save = {file-path}, don't ploting, plot-image save at {file-path}.
+
+      titles : None or list of string. default None.
+            if title = None, No titles above each data.
+
+            if title = list of string, add titles above each data. list length must be equal {datas} length.
+
+      cmap_name : name of matplotlib colormap to use. default is "winter_r".
+            choosing cloormap at : https://matplotlib.org/stable/tutorials/colors/colormaps.html
+    """
+    plotlen = len(datas)
+    mosaic_input = [None] * (plotlen << 1)
+    for i in range(plotlen):
+        j = i << 1
+        mosaic_input[j] = [f"{i}a"] + [f"{i}x"] * 4
+        mosaic_input[j+1] = [f"{i}a"] + [f"{i}y"] * 4
+    fig, axes = plt.subplot_mosaic(mosaic_input, figsize=(20, 4 * plotlen))
+    for i in range(plotlen):
+        if titles is not None:
+            axes[f"{i}a"].set_title(titles[i])
+        draw_gradation(datas[i][:,0], datas[i][:,1], axes[f"{i}a"], cmap_name=cmap_name, xlim=[0,1], ylim=[0,1])
+        x_indexes = np.arange(datas[i].shape[0])
+        draw_gradation(x_indexes, datas[i][:,0], axes[f"{i}x"], cmap_name=cmap_name, ylim=[0,1])
+        draw_gradation(x_indexes, datas[i][:,1], axes[f"{i}y"], cmap_name=cmap_name, ylim=[0,1])
+
+    plt.tight_layout()
+    if save is None:
+        plt.show()
+    else:
+        plt.savefig(save)
+        plt.close()
+
 def fft_analysis(d, fs):
     #d에 대해 FFT 변환을 수행하고, 
     channel = d.shape[1]
